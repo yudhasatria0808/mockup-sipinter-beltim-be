@@ -78,6 +78,7 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
     await DbSeeder.SeedAsync(db);
     await MasterDataSeeder.SeedAsync(db);
+    await DashboardDataSeeder.SeedAsync(db);
 }
 
 // Configure the HTTP request pipeline.
@@ -121,6 +122,9 @@ app.MapLevelKemungkinanEndpoints();
 app.MapLevelDampakEndpoints();
 app.MapLevelRisikoEndpoints();
 app.MapMatriksRisikoEndpoints();
+
+// Dashboard endpoints
+app.MapDashboardEndpoints();
 
 // Kewaspadaan Dini endpoints
 app.MapKewaspadaanEndpoints();
