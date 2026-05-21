@@ -128,6 +128,13 @@ app.MapKewaspadaanEndpoints();
 // Potensi Konflik endpoints
 app.MapPotensiKonflikEndpoints();
 
+// Peristiwa Konflik endpoints
+app.MapPeristiwaKonflikEndpoints();
+
+// WNA & TKA endpoints
+app.MapWnaEndpoints();
+app.MapTkaEndpoints();
+
 // ===== PELANGGAN (existing) =====
 var pelangganGroup = app.MapGroup("/api/pelanggan").WithTags("Pelanggan");
 

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SipintarBeltim.Data;
 
@@ -10,9 +11,11 @@ using SipintarBeltim.Data;
 namespace SipintarBeltim.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260521024104_AddPeristiwaKonflik")]
+    partial class AddPeristiwaKonflik
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -742,112 +745,6 @@ namespace SipintarBeltim.Migrations
                     b.ToTable("RolePermissions");
                 });
 
-            modelBuilder.Entity("SipintarBeltim.Models.TenagaKerjaAsing", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("AlamatDetail")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("ApprovedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ApprovedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CatatanApproval")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("CreatedByUserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Desa")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("JabatanKeterampilan")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("JenisIzinTinggal")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("JenisKelamin")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Kabupaten")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Kecamatan")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Keterangan")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Kewarganegaraan")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NamaPerusahaan")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NamaTKA")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NoPaspor")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NoTelepon")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NomorIMTA")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("Periode")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SaranTindakLanjut")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SumberInformasi")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("TanggalBerakhirIMTA")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("TanggalMulaiIMTA")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TitikKoordinat")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TenagaKerjaAsings");
-                });
-
             modelBuilder.Entity("SipintarBeltim.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -893,105 +790,6 @@ namespace SipintarBeltim.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("SipintarBeltim.Models.WargaNegaraAsing", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("AlamatDetail")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("ApprovedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ApprovedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CatatanApproval")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("CreatedByUserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Desa")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("JenisKelamin")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("JenisVisa")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Kabupaten")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Kecamatan")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Keterangan")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Kewarganegaraan")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LamaTinggal")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("MasaBerlakuVisa")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NoPaspor")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Pekerjaan")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("Periode")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SaranTindakLanjut")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Sponsor")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("StatusTinggal")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SumberInformasi")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TitikKoordinat")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("WargaNegaraAsings");
                 });
 
             modelBuilder.Entity("SipintarBeltim.Models.Wilayah", b =>

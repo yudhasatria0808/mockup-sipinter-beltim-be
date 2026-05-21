@@ -33,6 +33,13 @@ public class AppDbContext : DbContext
     // Potensi Konflik
     public DbSet<PotensiKonflik> PotensiKonfliks => Set<PotensiKonflik>();
 
+    // Peristiwa Konflik
+    public DbSet<PeristiwaKonflik> PeristiwaKonfliks => Set<PeristiwaKonflik>();
+
+    // WNA & TKA
+    public DbSet<WargaNegaraAsing> WargaNegaraAsings => Set<WargaNegaraAsing>();
+    public DbSet<TenagaKerjaAsing> TenagaKerjaAsings => Set<TenagaKerjaAsing>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // User
