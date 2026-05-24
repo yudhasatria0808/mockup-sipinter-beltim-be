@@ -212,6 +212,17 @@ public static class DbSeeder
                 IsActive = false,
                 RoleId = viewerRole.Id,
                 CreatedAt = new DateTime(2024, 5, 10, 0, 0, 0, DateTimeKind.Utc)
+            },
+            new User
+            {
+                Id = Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff"),
+                Username = "superadmin",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("superadmin123"),
+                FullName = "Super Admin SIPINTAR",
+                Email = "superadmin@sipintar.go.id",
+                IsActive = true,
+                RoleId = adminRole.Id,
+                CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             }
         };
 
