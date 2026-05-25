@@ -146,6 +146,16 @@ public static class WnaEndpoints
         // POST approval
         group.MapPost("/{id}/approval", async (string id, KewaspadaanApprovalRequest req, HttpContext ctx, AppDbContext db) =>
         {
+            // Check CanApprove permission
+            var userId = ctx.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId is null) return Results.Unauthorized();
+            var user = await db.Users.FindAsync(Guid.Parse(userId));
+            if (user is null) return Results.Unauthorized();
+            var menuId = Guid.Parse("b0000007-0000-0000-0000-000000000011"); // Form WNA
+            var hasPerm = await db.RolePermissions.AnyAsync(rp => rp.RoleId == user.RoleId && rp.MenuId == menuId && rp.CanApprove);
+            if (!hasPerm)
+                return Results.Json(new { success = false, message = "Anda tidak memiliki izin untuk approve/reject data ini" }, statusCode: 403);
+
             var item = await db.WargaNegaraAsings.FindAsync(Guid.Parse(id));
             if (item is null) return Results.NotFound(new { success = false, message = "Data tidak ditemukan" });
             if (item.Status != "menunggu") return Results.BadRequest(new { success = false, message = "Hanya data 'menunggu' yang dapat diproses" });
@@ -153,6 +163,7 @@ public static class WnaEndpoints
 
             item.Status = req.Action; item.CatatanApproval = req.Catatan;
             item.ApprovedBy = ctx.User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
+            item.ApprovedByRole = ctx.User.FindFirst(ClaimTypes.Role)?.Value ?? "";
             item.ApprovedAt = DateTime.UtcNow; item.UpdatedAt = DateTime.UtcNow;
             await db.SaveChangesAsync();
             return Results.Ok(new ApiResponse<WnaDetailDto> { Success = true, Data = MapToDetail(item),
@@ -184,6 +195,7 @@ public static class WnaEndpoints
         LamaTinggal = w.LamaTinggal, Keterangan = w.Keterangan,
         SumberInformasi = w.SumberInformasi, SaranTindakLanjut = w.SaranTindakLanjut,
         CatatanApproval = w.CatatanApproval, ApprovedBy = w.ApprovedBy,
+        ApprovedByRole = w.ApprovedByRole,
         ApprovedAt = w.ApprovedAt?.ToString("o"),
         CreatedAt = w.CreatedAt.ToString("o")
     };

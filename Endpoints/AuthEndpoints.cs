@@ -74,6 +74,7 @@ public static class AuthEndpoints
                 CanCreate = p.CanCreate,
                 CanUpdate = p.CanUpdate,
                 CanDelete = p.CanDelete,
+                CanApprove = p.CanApprove,
                 HasAccess = p.CanView || p.CanCreate || p.CanUpdate || p.CanDelete,
                 Idx = p.Menu.Idx
             }).ToList();

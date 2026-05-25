@@ -224,6 +224,16 @@ public static class KewaspadaanEndpoints
             KewaspadaanApprovalRequest request,
             HttpContext httpContext, AppDbContext db) =>
         {
+            // Check CanApprove permission
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId is null) return Results.Unauthorized();
+            var user = await db.Users.FindAsync(Guid.Parse(userId));
+            if (user is null) return Results.Unauthorized();
+            var menuId = Guid.Parse("b0000004-0000-0000-0000-000000000001"); // Form Kewaspadaan Dini
+            var hasPerm = await db.RolePermissions.AnyAsync(rp => rp.RoleId == user.RoleId && rp.MenuId == menuId && rp.CanApprove);
+            if (!hasPerm)
+                return Results.Json(new { success = false, message = "Anda tidak memiliki izin untuk approve/reject data ini" }, statusCode: 403);
+
             var item = await db.KewaspadaanDinis.FindAsync(Guid.Parse(id));
             if (item is null)
                 return Results.NotFound(new { success = false,
@@ -238,10 +248,12 @@ public static class KewaspadaanEndpoints
                     message = "Action harus 'disetujui' atau 'ditolak'" });
 
             var userName = httpContext.User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
+            var userRole = httpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? "";
 
             item.Status = request.Action;
             item.CatatanApproval = request.Catatan;
             item.ApprovedBy = userName;
+            item.ApprovedByRole = userRole;
             item.ApprovedAt = DateTime.UtcNow;
             item.UpdatedAt = DateTime.UtcNow;
 
@@ -313,6 +325,7 @@ public static class KewaspadaanEndpoints
             Status = k.Status,
             CatatanApproval = k.CatatanApproval,
             ApprovedBy = k.ApprovedBy,
+            ApprovedByRole = k.ApprovedByRole,
             ApprovedAt = k.ApprovedAt?.ToString("o"),
             CreatedBy = k.CreatedBy,
             CreatedAt = k.CreatedAt.ToString("o")

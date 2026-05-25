@@ -42,6 +42,7 @@ public class KewaspadaanDetailDto
     public string Status { get; set; } = string.Empty;
     public string? CatatanApproval { get; set; }
     public string? ApprovedBy { get; set; }
+    public string? ApprovedByRole { get; set; }
     public string? ApprovedAt { get; set; }
 
     // Meta

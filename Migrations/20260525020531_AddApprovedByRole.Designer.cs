@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SipintarBeltim.Data;
 
@@ -10,9 +11,11 @@ using SipintarBeltim.Data;
 namespace SipintarBeltim.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260525020531_AddApprovedByRole")]
+    partial class AddApprovedByRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -84,233 +87,6 @@ namespace SipintarBeltim.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AuditTrails");
-                });
-
-            modelBuilder.Entity("SipintarBeltim.Models.ForumArahan", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByRole")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("ForumTopikId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("InstansiTujuan")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Isi")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Judul")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Prioritas")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ForumTopikId");
-
-                    b.ToTable("ForumArahans");
-                });
-
-            modelBuilder.Entity("SipintarBeltim.Models.ForumKomentar", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByRole")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("ForumTopikId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Isi")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ForumTopikId");
-
-                    b.ToTable("ForumKomentars");
-                });
-
-            modelBuilder.Entity("SipintarBeltim.Models.ForumPengumuman", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByRole")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Isi")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Judul")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Prioritas")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ForumPengumumans");
-                });
-
-            modelBuilder.Entity("SipintarBeltim.Models.ForumTindakLanjut", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByRole")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("ForumArahanId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Isi")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("TanggalSelesai")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ForumArahanId");
-
-                    b.ToTable("ForumTindakLanjuts");
-                });
-
-            modelBuilder.Entity("SipintarBeltim.Models.ForumTopik", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByRole")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Isi")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Judul")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Kategori")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("KewaspadaanDiniId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("PeristiwaKonflikId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Prioritas")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ForumTopiks");
                 });
 
             modelBuilder.Entity("SipintarBeltim.Models.Instansi", b =>
@@ -1282,38 +1058,6 @@ namespace SipintarBeltim.Migrations
                     b.ToTable("Wilayahs");
                 });
 
-            modelBuilder.Entity("SipintarBeltim.Models.ForumArahan", b =>
-                {
-                    b.HasOne("SipintarBeltim.Models.ForumTopik", "ForumTopik")
-                        .WithMany()
-                        .HasForeignKey("ForumTopikId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("ForumTopik");
-                });
-
-            modelBuilder.Entity("SipintarBeltim.Models.ForumKomentar", b =>
-                {
-                    b.HasOne("SipintarBeltim.Models.ForumTopik", "ForumTopik")
-                        .WithMany("Komentars")
-                        .HasForeignKey("ForumTopikId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ForumTopik");
-                });
-
-            modelBuilder.Entity("SipintarBeltim.Models.ForumTindakLanjut", b =>
-                {
-                    b.HasOne("SipintarBeltim.Models.ForumArahan", "ForumArahan")
-                        .WithMany("TindakLanjuts")
-                        .HasForeignKey("ForumArahanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ForumArahan");
-                });
-
             modelBuilder.Entity("SipintarBeltim.Models.MatriksRisiko", b =>
                 {
                     b.HasOne("SipintarBeltim.Models.LevelDampak", "Dampak")
@@ -1397,16 +1141,6 @@ namespace SipintarBeltim.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("SipintarBeltim.Models.ForumArahan", b =>
-                {
-                    b.Navigation("TindakLanjuts");
-                });
-
-            modelBuilder.Entity("SipintarBeltim.Models.ForumTopik", b =>
-                {
-                    b.Navigation("Komentars");
                 });
 
             modelBuilder.Entity("SipintarBeltim.Models.Menu", b =>

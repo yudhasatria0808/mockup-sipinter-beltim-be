@@ -139,6 +139,11 @@ app.MapPeristiwaKonflikEndpoints();
 app.MapWnaEndpoints();
 app.MapTkaEndpoints();
 
+// Forum Komunikasi Pimpinan Daerah endpoints
+app.MapForumTopikEndpoints();
+app.MapForumArahanEndpoints();
+app.MapForumPengumumanEndpoints();
+
 // ===== PELANGGAN (existing) =====
 var pelangganGroup = app.MapGroup("/api/pelanggan").WithTags("Pelanggan");
 

@@ -30,6 +30,7 @@ public class WnaDetailDto : WnaListDto
     public string? SaranTindakLanjut { get; set; }
     public string? CatatanApproval { get; set; }
     public string? ApprovedBy { get; set; }
+    public string? ApprovedByRole { get; set; }
     public string? ApprovedAt { get; set; }
     public string CreatedAt { get; set; } = string.Empty;
 }
@@ -91,6 +92,7 @@ public class TkaDetailDto : TkaListDto
     public string? SaranTindakLanjut { get; set; }
     public string? CatatanApproval { get; set; }
     public string? ApprovedBy { get; set; }
+    public string? ApprovedByRole { get; set; }
     public string? ApprovedAt { get; set; }
     public string CreatedAt { get; set; } = string.Empty;
 }

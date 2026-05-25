@@ -136,14 +136,26 @@ public static class PotensiKonflikEndpoints
         // POST approval
         group.MapPost("/{id}/approval", async (string id, KewaspadaanApprovalRequest req, HttpContext ctx, AppDbContext db) =>
         {
+            // Check CanApprove permission
+            var userId = ctx.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId is null) return Results.Unauthorized();
+            var user = await db.Users.FindAsync(Guid.Parse(userId));
+            if (user is null) return Results.Unauthorized();
+            var menuId = Guid.Parse("b0000005-0000-0000-0000-000000000001"); // Form Potensi Konflik
+            var hasPerm = await db.RolePermissions.AnyAsync(rp => rp.RoleId == user.RoleId && rp.MenuId == menuId && rp.CanApprove);
+            if (!hasPerm)
+                return Results.Json(new { success = false, message = "Anda tidak memiliki izin untuk approve/reject data ini" }, statusCode: 403);
+
             var item = await db.PotensiKonfliks.FindAsync(Guid.Parse(id));
             if (item is null) return Results.NotFound(new { success = false, message = "Data tidak ditemukan" });
             if (item.Status != "menunggu") return Results.BadRequest(new { success = false, message = "Hanya data 'menunggu' yang dapat diproses" });
             if (req.Action != "disetujui" && req.Action != "ditolak") return Results.BadRequest(new { success = false, message = "Action harus 'disetujui' atau 'ditolak'" });
 
             var userName = ctx.User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
+            var userRole = ctx.User.FindFirst(ClaimTypes.Role)?.Value ?? "";
             item.Status = req.Action; item.CatatanApproval = req.Catatan;
-            item.ApprovedBy = userName; item.ApprovedAt = DateTime.UtcNow; item.UpdatedAt = DateTime.UtcNow;
+            item.ApprovedBy = userName; item.ApprovedByRole = userRole;
+            item.ApprovedAt = DateTime.UtcNow; item.UpdatedAt = DateTime.UtcNow;
             await db.SaveChangesAsync();
             return Results.Ok(new ApiResponse<PotensiKonflikDetailDto> { Success = true, Data = MapToDetail(item),
                 Message = req.Action == "disetujui" ? "Data berhasil disetujui" : "Data berhasil ditolak" });
@@ -173,7 +185,7 @@ public static class PotensiKonflikEndpoints
         UpayaPenanganan = p.UpayaPenanganan, KeteranganDetail = p.KeteranganDetail,
         Rekomendasi = p.Rekomendasi, TingkatRisiko = p.TingkatRisiko,
         Status = p.Status, CatatanApproval = p.CatatanApproval,
-        ApprovedBy = p.ApprovedBy, ApprovedAt = p.ApprovedAt?.ToString("o"),
+        ApprovedBy = p.ApprovedBy, ApprovedByRole = p.ApprovedByRole, ApprovedAt = p.ApprovedAt?.ToString("o"),
         CreatedBy = p.CreatedBy, CreatedAt = p.CreatedAt.ToString("o")
     };
 }

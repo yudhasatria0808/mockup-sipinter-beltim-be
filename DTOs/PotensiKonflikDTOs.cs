@@ -39,6 +39,7 @@ public class PotensiKonflikDetailDto
     public string Status { get; set; } = string.Empty;
     public string? CatatanApproval { get; set; }
     public string? ApprovedBy { get; set; }
+    public string? ApprovedByRole { get; set; }
     public string? ApprovedAt { get; set; }
     public string CreatedBy { get; set; } = string.Empty;
     public string CreatedAt { get; set; } = string.Empty;

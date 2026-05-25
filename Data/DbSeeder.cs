@@ -11,11 +11,19 @@ public static class DbSeeder
             return; // Already seeded
 
         // ===== ROLES =====
+        var superAdminRole = new Role
+        {
+            Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+            Name = "Super Administrator",
+            Description = "Akses penuh ke seluruh modul dan fitur sistem termasuk administrasi",
+            IsProtected = true,
+            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+        };
         var adminRole = new Role
         {
             Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             Name = "Administrator",
-            Description = "Akses penuh ke seluruh modul dan fitur sistem",
+            Description = "Approval dan pengelolaan data operasional (tanpa akses administrasi sistem)",
             IsProtected = true,
             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
         };
@@ -36,7 +44,7 @@ public static class DbSeeder
             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
         };
 
-        db.Roles.AddRange(adminRole, operatorRole, viewerRole);
+        db.Roles.AddRange(superAdminRole, adminRole, operatorRole, viewerRole);
 
         // ===== MODULS & MENUS =====
         var moduls = CreateModulsAndMenus();
@@ -62,18 +70,64 @@ public static class DbSeeder
             }
         }
 
-        // Administrator: full access
+        // Super Administrator: full access to everything
         foreach (var menu in allMenusFlat)
         {
             db.RolePermissions.Add(new RolePermission
             {
-                RoleId = adminRole.Id,
+                RoleId = superAdminRole.Id,
                 MenuId = menu.Id,
                 CanView = true,
                 CanCreate = true,
                 CanUpdate = true,
-                CanDelete = true
+                CanDelete = true,
+                CanApprove = true
             });
+        }
+
+        // Administrator: full access except admin-only menus (Roles, Users, Audit Trail, Master Data, Matriks Risiko, General Setting)
+        var adminExcludedMenus = new HashSet<Guid>
+        {
+            Guid.Parse("b0000001-0000-0000-0000-000000000002"), // Role Management
+            Guid.Parse("b0000001-0000-0000-0000-000000000003"), // User Management
+            Guid.Parse("b0000001-0000-0000-0000-000000000004"), // Audit Trail
+            Guid.Parse("b0000002-0000-0000-0000-000000000001"), // Aspek
+            Guid.Parse("b0000002-0000-0000-0000-000000000002"), // Jenis Konflik
+            Guid.Parse("b0000002-0000-0000-0000-000000000003"), // Instansi
+            Guid.Parse("b0000002-0000-0000-0000-000000000004"), // Wilayah
+            Guid.Parse("b0000003-0000-0000-0000-000000000001"), // Level Kemungkinan
+            Guid.Parse("b0000003-0000-0000-0000-000000000002"), // Level Dampak
+            Guid.Parse("b0000003-0000-0000-0000-000000000003"), // Level Risiko
+            Guid.Parse("b0000003-0000-0000-0000-000000000004"), // Matriks Risiko
+            Guid.Parse("b0000009-0000-0000-0000-000000000003"), // General Setting
+            Guid.Parse("b0000009-0000-0000-0000-000000000005"), // Backup & Restore
+        };
+
+        // Menus where Admin cannot create (only approve/view/update)
+        var adminNoCreateMenus = new HashSet<Guid>
+        {
+            Guid.Parse("b0000004-0000-0000-0000-000000000001"), // Form Kewaspadaan Dini
+            Guid.Parse("b0000005-0000-0000-0000-000000000001"), // Form Potensi Konflik
+            Guid.Parse("b0000006-0000-0000-0000-000000000001"), // Form Peristiwa Konflik
+            Guid.Parse("b0000007-0000-0000-0000-000000000011"), // Form WNA
+            Guid.Parse("b0000007-0000-0000-0000-000000000021"), // Form TKA
+        };
+
+        foreach (var menu in allMenusFlat)
+        {
+            if (!adminExcludedMenus.Contains(menu.Id))
+            {
+                db.RolePermissions.Add(new RolePermission
+                {
+                    RoleId = adminRole.Id,
+                    MenuId = menu.Id,
+                    CanView = true,
+                    CanCreate = !adminNoCreateMenus.Contains(menu.Id),
+                    CanUpdate = true,
+                    CanDelete = true,
+                    CanApprove = true
+                });
+            }
         }
 
         // Operator: limited access — use menu Id directly to avoid key collisions
@@ -118,7 +172,8 @@ public static class DbSeeder
                     CanView = true,
                     CanCreate = !isEws,
                     CanUpdate = !isEws,
-                    CanDelete = false
+                    CanDelete = false,
+                    CanApprove = false
                 });
             }
         }
@@ -148,7 +203,8 @@ public static class DbSeeder
                     CanView = true,
                     CanCreate = false,
                     CanUpdate = false,
-                    CanDelete = false
+                    CanDelete = false,
+                    CanApprove = false
                 });
             }
         }
@@ -221,7 +277,7 @@ public static class DbSeeder
                 FullName = "Super Admin SIPINTAR",
                 Email = "superadmin@sipintar.go.id",
                 IsActive = true,
-                RoleId = adminRole.Id,
+                RoleId = superAdminRole.Id,
                 CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             }
         };
@@ -234,30 +290,43 @@ public static class DbSeeder
     {
         var moduls = new List<Modul>();
 
-        // 1. Administrasi
+        // 1. Dashboard (berdiri sendiri, bukan bagian dari Admin)
+        var modDashboard = new Modul
+        {
+            Id = Guid.Parse("a0000001-0000-0000-0000-000000000010"),
+            Name = "Dashboard",
+            Description = "Halaman utama dashboard",
+            Idx = 1
+        };
+        modDashboard.Menus = new List<Menu>
+        {
+            new Menu { Id = Guid.Parse("b0000001-0000-0000-0000-000000000001"), Name = "Dashboard", Description = "Halaman utama dashboard", Idx = 1, ModulId = modDashboard.Id },
+        };
+        moduls.Add(modDashboard);
+
+        // 2. Administrasi
         var modAdmin = new Modul
         {
             Id = Guid.Parse("a0000001-0000-0000-0000-000000000001"),
             Name = "Administrasi",
             Description = "Manajemen pengguna, role, dan audit trail",
-            Idx = 1
+            Idx = 2
         };
         modAdmin.Menus = new List<Menu>
         {
-            new Menu { Id = Guid.Parse("b0000001-0000-0000-0000-000000000001"), Name = "Dashboard", Description = "Halaman utama dashboard", Idx = 1, ModulId = modAdmin.Id },
-            new Menu { Id = Guid.Parse("b0000001-0000-0000-0000-000000000002"), Name = "Role Management", Description = "Kelola role dan permission", Idx = 2, ModulId = modAdmin.Id },
-            new Menu { Id = Guid.Parse("b0000001-0000-0000-0000-000000000003"), Name = "User Management", Description = "Kelola pengguna sistem", Idx = 3, ModulId = modAdmin.Id },
-            new Menu { Id = Guid.Parse("b0000001-0000-0000-0000-000000000004"), Name = "Audit Trail", Description = "Riwayat aktivitas sistem", Idx = 4, ModulId = modAdmin.Id },
+            new Menu { Id = Guid.Parse("b0000001-0000-0000-0000-000000000002"), Name = "Role Management", Description = "Kelola role dan permission", Idx = 1, ModulId = modAdmin.Id },
+            new Menu { Id = Guid.Parse("b0000001-0000-0000-0000-000000000003"), Name = "User Management", Description = "Kelola pengguna sistem", Idx = 2, ModulId = modAdmin.Id },
+            new Menu { Id = Guid.Parse("b0000001-0000-0000-0000-000000000004"), Name = "Audit Trail", Description = "Riwayat aktivitas sistem", Idx = 3, ModulId = modAdmin.Id },
         };
         moduls.Add(modAdmin);
 
-        // 2. Master Data
+        // 3. Master Data
         var modMaster = new Modul
         {
             Id = Guid.Parse("a0000001-0000-0000-0000-000000000002"),
             Name = "Master Data",
             Description = "Data referensi utama aplikasi",
-            Idx = 2
+            Idx = 3
         };
         modMaster.Menus = new List<Menu>
         {
@@ -268,13 +337,13 @@ public static class DbSeeder
         };
         moduls.Add(modMaster);
 
-        // 3. Matriks Risiko
+        // 4. Matriks Risiko
         var modRisiko = new Modul
         {
             Id = Guid.Parse("a0000001-0000-0000-0000-000000000003"),
             Name = "Matriks Risiko",
             Description = "Konfigurasi level dan matriks risiko",
-            Idx = 3
+            Idx = 4
         };
         modRisiko.Menus = new List<Menu>
         {
@@ -285,13 +354,13 @@ public static class DbSeeder
         };
         moduls.Add(modRisiko);
 
-        // 4. Kewaspadaan Dini
+        // 5. Kewaspadaan Dini
         var modKewaspadaan = new Modul
         {
             Id = Guid.Parse("a0000001-0000-0000-0000-000000000004"),
             Name = "Kewaspadaan Dini",
             Description = "Form dan monitoring kewaspadaan dini",
-            Idx = 4
+            Idx = 5
         };
         modKewaspadaan.Menus = new List<Menu>
         {
@@ -300,13 +369,13 @@ public static class DbSeeder
         };
         moduls.Add(modKewaspadaan);
 
-        // 5. Potensi Konflik
+        // 6. Potensi Konflik
         var modPotensi = new Modul
         {
             Id = Guid.Parse("a0000001-0000-0000-0000-000000000005"),
             Name = "Potensi Konflik",
             Description = "Pencatatan dan monitoring potensi konflik",
-            Idx = 5
+            Idx = 6
         };
         modPotensi.Menus = new List<Menu>
         {
@@ -315,13 +384,13 @@ public static class DbSeeder
         };
         moduls.Add(modPotensi);
 
-        // 6. Peristiwa Konflik
+        // 7. Peristiwa Konflik
         var modPeristiwa = new Modul
         {
             Id = Guid.Parse("a0000001-0000-0000-0000-000000000006"),
             Name = "Peristiwa Konflik",
             Description = "Pencatatan dan monitoring peristiwa konflik",
-            Idx = 6
+            Idx = 7
         };
         modPeristiwa.Menus = new List<Menu>
         {
@@ -330,13 +399,13 @@ public static class DbSeeder
         };
         moduls.Add(modPeristiwa);
 
-        // 7. WNA & TKA
+        // 8. WNA & TKA
         var modWnaTka = new Modul
         {
             Id = Guid.Parse("a0000001-0000-0000-0000-000000000007"),
             Name = "WNA & TKA",
             Description = "Monitoring warga negara asing dan tenaga kerja asing",
-            Idx = 7
+            Idx = 8
         };
         var menuWna = new Menu { Id = Guid.Parse("b0000007-0000-0000-0000-000000000001"), Name = "Warga Negara Asing", Description = "Data WNA", Idx = 1, ModulId = modWnaTka.Id };
         var menuTka = new Menu { Id = Guid.Parse("b0000007-0000-0000-0000-000000000002"), Name = "Tenaga Kerja Asing", Description = "Data TKA", Idx = 2, ModulId = modWnaTka.Id };
@@ -355,13 +424,13 @@ public static class DbSeeder
         modWnaTka.Menus = new List<Menu> { menuWna, menuTka };
         moduls.Add(modWnaTka);
 
-        // 8. Tindak Lanjut
+        // 9. Tindak Lanjut
         var modTindakLanjut = new Modul
         {
             Id = Guid.Parse("a0000001-0000-0000-0000-000000000008"),
             Name = "Tindak Lanjut",
             Description = "Tindak lanjut dan keputusan",
-            Idx = 8
+            Idx = 9
         };
         modTindakLanjut.Menus = new List<Menu>
         {
@@ -369,13 +438,13 @@ public static class DbSeeder
         };
         moduls.Add(modTindakLanjut);
 
-        // 9. Laporan & Pengaturan
+        // 10. Laporan & Pengaturan
         var modLaporan = new Modul
         {
             Id = Guid.Parse("a0000001-0000-0000-0000-000000000009"),
             Name = "Laporan & Pengaturan",
             Description = "Laporan periodik dan pengaturan sistem",
-            Idx = 9
+            Idx = 10
         };
         modLaporan.Menus = new List<Menu>
         {
@@ -383,6 +452,7 @@ public static class DbSeeder
             new Menu { Id = Guid.Parse("b0000009-0000-0000-0000-000000000002"), Name = "Notifikasi", Description = "Pengaturan notifikasi", Idx = 2, ModulId = modLaporan.Id },
             new Menu { Id = Guid.Parse("b0000009-0000-0000-0000-000000000003"), Name = "General Setting", Description = "Pengaturan umum aplikasi", Idx = 3, ModulId = modLaporan.Id },
             new Menu { Id = Guid.Parse("b0000009-0000-0000-0000-000000000004"), Name = "Pengaturan Tampilan", Description = "Kustomisasi tampilan", Idx = 4, ModulId = modLaporan.Id },
+            new Menu { Id = Guid.Parse("b0000009-0000-0000-0000-000000000005"), Name = "Backup & Restore", Description = "Backup dan restore database", Idx = 5, ModulId = modLaporan.Id },
         };
         moduls.Add(modLaporan);
 

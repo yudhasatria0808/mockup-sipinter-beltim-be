@@ -40,6 +40,13 @@ public class AppDbContext : DbContext
     public DbSet<WargaNegaraAsing> WargaNegaraAsings => Set<WargaNegaraAsing>();
     public DbSet<TenagaKerjaAsing> TenagaKerjaAsings => Set<TenagaKerjaAsing>();
 
+    // Forum Komunikasi Pimpinan Daerah
+    public DbSet<ForumTopik> ForumTopiks => Set<ForumTopik>();
+    public DbSet<ForumKomentar> ForumKomentars => Set<ForumKomentar>();
+    public DbSet<ForumArahan> ForumArahans => Set<ForumArahan>();
+    public DbSet<ForumTindakLanjut> ForumTindakLanjuts => Set<ForumTindakLanjut>();
+    public DbSet<ForumPengumuman> ForumPengumumans => Set<ForumPengumuman>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // User
@@ -121,6 +128,33 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<LevelDampak>(entity =>
         {
             entity.HasIndex(e => e.Skor).IsUnique();
+        });
+
+        // Forum Komentar
+        modelBuilder.Entity<ForumKomentar>(entity =>
+        {
+            entity.HasOne(e => e.ForumTopik)
+                  .WithMany(t => t.Komentars)
+                  .HasForeignKey(e => e.ForumTopikId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Forum Arahan
+        modelBuilder.Entity<ForumArahan>(entity =>
+        {
+            entity.HasOne(e => e.ForumTopik)
+                  .WithMany()
+                  .HasForeignKey(e => e.ForumTopikId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // Forum Tindak Lanjut
+        modelBuilder.Entity<ForumTindakLanjut>(entity =>
+        {
+            entity.HasOne(e => e.ForumArahan)
+                  .WithMany(a => a.TindakLanjuts)
+                  .HasForeignKey(e => e.ForumArahanId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         // Pelanggan seed (existing)

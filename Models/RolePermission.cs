@@ -11,4 +11,5 @@ public class RolePermission
     public bool CanCreate { get; set; }
     public bool CanUpdate { get; set; }
     public bool CanDelete { get; set; }
+    public bool CanApprove { get; set; }
 }

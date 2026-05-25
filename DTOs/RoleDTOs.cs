@@ -31,6 +31,7 @@ public class MenuPermissionDto
     public bool CanCreate { get; set; }
     public bool CanUpdate { get; set; }
     public bool CanDelete { get; set; }
+    public bool CanApprove { get; set; }
     public bool HasAccess { get; set; }
     public int Idx { get; set; }
     public List<MenuPermissionDto> Child { get; set; } = new();
@@ -58,4 +59,5 @@ public class RoleMenuPermissionRequest
     public bool CanCreate { get; set; }
     public bool CanUpdate { get; set; }
     public bool CanDelete { get; set; }
+    public bool CanApprove { get; set; }
 }

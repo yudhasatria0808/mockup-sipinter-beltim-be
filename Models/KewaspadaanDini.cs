@@ -30,6 +30,7 @@ public class KewaspadaanDini
     public string Status { get; set; } = "draft"; // draft, menunggu, disetujui, ditolak
     public string? CatatanApproval { get; set; }
     public string? ApprovedBy { get; set; }
+    public string? ApprovedByRole { get; set; }
     public DateTime? ApprovedAt { get; set; }
 
     // Meta

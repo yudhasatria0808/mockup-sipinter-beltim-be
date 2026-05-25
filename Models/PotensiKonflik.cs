@@ -32,6 +32,7 @@ public class PotensiKonflik
     public string Status { get; set; } = "draft";
     public string? CatatanApproval { get; set; }
     public string? ApprovedBy { get; set; }
+    public string? ApprovedByRole { get; set; }
     public DateTime? ApprovedAt { get; set; }
 
     // Meta

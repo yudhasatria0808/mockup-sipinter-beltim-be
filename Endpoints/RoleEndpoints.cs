@@ -220,7 +220,8 @@ public static class RoleEndpoints
                         CanView = menuPerm.CanView,
                         CanCreate = menuPerm.CanCreate,
                         CanUpdate = menuPerm.CanUpdate,
-                        CanDelete = menuPerm.CanDelete
+                        CanDelete = menuPerm.CanDelete,
+                        CanApprove = menuPerm.CanApprove
                     });
                 }
             }
@@ -258,6 +259,7 @@ public static class RoleEndpoints
                     CanCreate = perm?.CanCreate ?? false,
                     CanUpdate = perm?.CanUpdate ?? false,
                     CanDelete = perm?.CanDelete ?? false,
+                    CanApprove = perm?.CanApprove ?? false,
                     HasAccess = (perm?.CanView ?? false) || (perm?.CanCreate ?? false) || (perm?.CanUpdate ?? false) || (perm?.CanDelete ?? false),
                     Idx = menu.Idx,
                     Child = menu.Children.OrderBy(c => c.Idx).Select(child =>
@@ -272,6 +274,7 @@ public static class RoleEndpoints
                             CanCreate = childPerm?.CanCreate ?? false,
                             CanUpdate = childPerm?.CanUpdate ?? false,
                             CanDelete = childPerm?.CanDelete ?? false,
+                            CanApprove = childPerm?.CanApprove ?? false,
                             HasAccess = (childPerm?.CanView ?? false) || (childPerm?.CanCreate ?? false) || (childPerm?.CanUpdate ?? false) || (childPerm?.CanDelete ?? false),
                             Idx = child.Idx,
                             Child = new List<MenuPermissionDto>()
@@ -305,6 +308,7 @@ public static class RoleEndpoints
                 CanCreate = false,
                 CanUpdate = false,
                 CanDelete = false,
+                CanApprove = false,
                 HasAccess = false,
                 Idx = menu.Idx,
                 Child = menu.Children.OrderBy(c => c.Idx).Select(child => new MenuPermissionDto
@@ -316,6 +320,7 @@ public static class RoleEndpoints
                     CanCreate = false,
                     CanUpdate = false,
                     CanDelete = false,
+                    CanApprove = false,
                     HasAccess = false,
                     Idx = child.Idx,
                     Child = new List<MenuPermissionDto>()
